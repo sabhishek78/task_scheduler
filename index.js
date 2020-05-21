@@ -11,23 +11,21 @@ function scheduler(tasks,coolingTime){
             tasksMap.set(task,value);
         }
     }
-    // console.log(tasksMap);
     let keys=Array.from(tasksMap.keys());
-
     keys.sort(function(a,b){return tasksMap.get(b)-tasksMap.get(a)});
-    // console.log(keys);
     let tasksList=[];
     let keyPushed=false;
-    let tasksListIndex=0;
+    let tasksListPushCount=0;
     while(tasksMap.size!==0){
         keyPushed=false;
         for(let i=0;i<keys.length;i++){
-            if(!keyPresentInLastnPositions(tasksListIndex,tasksList,keys[i],coolingTime)){
-                // console.log("key="+keys[i]+"not present in last"+coolingTime+"positions");
+            if(!tasksList.includes(keys[i])){
                 tasksList.push(keys[i]);
-                tasksListIndex++;
+                tasksListPushCount++;
+                if(tasksList.length>coolingTime){
+                    tasksList.shift();
+                }
                 keyPushed=true;
-                // console.log("tasksList="+tasksList);
                 let value=tasksMap.get(keys[i]);
                 value=value-1;
                 tasksMap.set(keys[i],value);
@@ -35,40 +33,20 @@ function scheduler(tasks,coolingTime){
                     tasksMap.delete(keys[i]);
                     i=i-1;
                 }
-                // console.log("updated tasksMap");
-                // console.log(tasksMap);
                 keys=Array.from(tasksMap.keys());
-                // console.log("updated keys");
-                // console.log(keys);
             }
-
-
         }
         if(!keyPushed){
-            // console.log("idle");
             tasksList.push('idle');
-            tasksListIndex++;
-
-        }
-
-        // console.log("finished one set of keys");
-    }
-    // console.log("tasksList");
-     console.log(tasksList);
-    return tasksList.length;
-
-}
-function keyPresentInLastnPositions(tasksListIndex,tasksList,key,coolingTime){
-    for(let i=1;i<=coolingTime;i++){
-        if(tasksList[tasksListIndex-i]!==undefined){
-            if(tasksList[tasksListIndex-i]===key){
-                return true;
+            tasksListPushCount++;
+            if(tasksList.length>coolingTime){
+                tasksList.shift();
             }
         }
-
     }
-    return false;
+    return tasksListPushCount;
 }
+
  console.log(scheduler(["A","A","A","B","B"],4)===11);
 console.log(scheduler(["A","A","A","B","B","B"],3)===10);
 console.log(scheduler(["A","B","A","B","A","B"],3)===10);
