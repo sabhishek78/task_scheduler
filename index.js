@@ -11,29 +11,46 @@ function scheduler(tasks,coolingTime){
             tasksMap.set(task,value);
         }
     }
-    let keys=Array.from(tasksMap.keys());
-    keys.sort(function(a,b){return tasksMap.get(b)-tasksMap.get(a)});
+    // let keys=Array.from(tasksMap.keys());
+    // keys.sort(function(a,b){return tasksMap.get(b)-tasksMap.get(a)});
+    ///////////////
+    // let entries=[];
+    // for (let key of tasksMap){
+    //     entries.push(key);
+    // }
+    let entries=Array.from(tasksMap.entries());
+     // console.log(entries);
+    entries.sort(function(a,b){return b[1]-a[1]});
+    // console.log(entries);
+    /////////////////
     let tasksList=[];
     let keyPushed=false;
     let tasksListPushCount=0;
     while(tasksMap.size!==0){
+        entries.sort(function(a,b){return b[1]-a[1]});
         keyPushed=false;
-        for(let i=0;i<keys.length;i++){
-            if(!tasksList.includes(keys[i])){
-                tasksList.push(keys[i]);
+        for(let i=0;i<entries.length;i++){
+            let currentTask=entries[i][0];
+            let value=entries[i][1];
+            if(!tasksList.includes(currentTask)){
+                tasksList.push(currentTask);
                 tasksListPushCount++;
                 if(tasksList.length>coolingTime){
                     tasksList.shift();
                 }
                 keyPushed=true;
-                let value=tasksMap.get(keys[i]);
-                value=value-1;
-                tasksMap.set(keys[i],value);
-                if(tasksMap.get(keys[i])===0){
-                    tasksMap.delete(keys[i]);
+                // let value=tasksMap.get(entries[i][0]);
+                // let value=entries[i][1];
+                // value=value-1;
+                tasksMap.set(currentTask,value-1);
+
+
+                if(tasksMap.get(currentTask)===0){
+                    tasksMap.delete(currentTask);
                     i=i-1;
                 }
-                keys=Array.from(tasksMap.keys());
+                // keys=Array.from(tasksMap.keys());
+                entries=Array.from(tasksMap.entries());
             }
         }
         if(!keyPushed){
@@ -47,7 +64,7 @@ function scheduler(tasks,coolingTime){
     return tasksListPushCount;
 }
 
- console.log(scheduler(["A","A","A","B","B"],4)===11);
+console.log(scheduler(["A","A","A","B","B"],4)===11);
 console.log(scheduler(["A","A","A","B","B","B"],3)===10);
 console.log(scheduler(["A","B","A","B","A","B"],3)===10);
 console.log(scheduler(["A","A","A","B","B","B"],2)===8);
@@ -65,6 +82,26 @@ console.log(scheduler(["A","B","C","D"],1)===4);
 console.log(scheduler(["A","A","A"],0)===3);
 console.log(scheduler(["A","A","A"],5)===13);
 console.log(scheduler(["A","A","B","B","A","A"],4)===16);
+
+
+
+// console.log(scheduler(["A","A","A","B","B","B"],3)===10);
+// console.log(scheduler(["A","B","A","B","A","B"],3)===10);
+// console.log(scheduler(["A","A","A","B","B","B"],2)===8);
+// console.log(scheduler(["A","A","A","B","B","B"],3)===10);
+// console.log(scheduler(["A"],7)===1);
+// console.log(scheduler(["A","B"],7)===2);
+// console.log(scheduler(["A","B","A"],3)===5);
+// console.log(scheduler(["B","A","A"],3)===5);
+// console.log(scheduler(["B","A","A","B"],1)===4);
+// console.log(scheduler(["B","A","A"],3)===5);
+// console.log(scheduler(["B","A","A"],1)===3);
+// console.log(scheduler(["A","A"],0)===2);
+// console.log(scheduler(["B","A","A","A"],1)===5);
+// console.log(scheduler(["A","B","C","D"],1)===4);
+// console.log(scheduler(["A","A","A"],0)===3);
+// console.log(scheduler(["A","A","A"],5)===13);
+// console.log(scheduler(["A","A","B","B","A","A"],4)===16);
 
 
 // Given a char array representing tasks CPU need to do. It contains capital letters A to Z where different letters represent different tasks. Tasks could be done without original order. Each task could be done in one interval. For each interval, CPU could finish one task or just be idle.
@@ -87,3 +124,5 @@ console.log(scheduler(["A","A","B","B","A","A"],4)===16);
 // Constraints:
 // The number of tasks is in the range [1, 10000].
 // The integer n is in the range [0, 100].
+
+
