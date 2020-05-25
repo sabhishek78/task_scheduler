@@ -45,7 +45,7 @@ function scheduler(tasks,coolingTime){
                 tasksMap.set(currentTask,value-1);
 
 
-                if(value-1===0){
+                if(value===1){
                     tasksMap.delete(currentTask);
                     i=i-1;
                 }
