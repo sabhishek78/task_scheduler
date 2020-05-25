@@ -21,7 +21,7 @@ function scheduler(tasks,coolingTime){
     let entries=Array.from(tasksMap.entries());
      // console.log(entries);
     entries.sort(function(a,b){return b[1]-a[1]});
-    // console.log(entries);
+    console.log(entries);
     /////////////////
     let tasksList=[];
     let keyPushed=false;
@@ -45,7 +45,7 @@ function scheduler(tasks,coolingTime){
                 tasksMap.set(currentTask,value-1);
 
 
-                if(tasksMap.get(currentTask)===0){
+                if(value-1===0){
                     tasksMap.delete(currentTask);
                     i=i-1;
                 }
