@@ -1,58 +1,33 @@
 function scheduler(tasks,coolingTime){
     let tasksMap = new Map();
-    for(let i=0;i<tasks.length;i++){
-        let task=tasks[i];
-        if(tasksMap.get(task)===undefined){
-            tasksMap.set(task,1);
-        }
-        else{
-            let value=tasksMap.get(task);
-            value=value+1;
-            tasksMap.set(task,value);
-        }
-    }
-    // let keys=Array.from(tasksMap.keys());
-    // keys.sort(function(a,b){return tasksMap.get(b)-tasksMap.get(a)});
-    ///////////////
-    // let entries=[];
-    // for (let key of tasksMap){
-    //     entries.push(key);
-    // }
+    tasks.forEach((e)=>tasksMap.get(e)===undefined?tasksMap.set(e,1):tasksMap.set(e,tasksMap.get(e)+1))
     let entries=Array.from(tasksMap.entries());
-     // console.log(entries);
     entries.sort(function(a,b){return b[1]-a[1]});
-    console.log(entries);
-    /////////////////
     let tasksList=[];
     let keyPushed=false;
     let tasksListPushCount=0;
     while(tasksMap.size!==0){
-        entries.sort(function(a,b){return b[1]-a[1]});
         keyPushed=false;
-        for(let i=0;i<entries.length;i++){
-            let currentTask=entries[i][0];
-            let value=entries[i][1];
-            if(!tasksList.includes(currentTask)){
-                tasksList.push(currentTask);
-                tasksListPushCount++;
-                if(tasksList.length>coolingTime){
-                    tasksList.shift();
+        entries.forEach(([key,value],index)=> {
+                let currentTask = key;
+                let count = value;
+                if (!tasksList.includes(currentTask)) {
+                    tasksList.push(currentTask);
+                    tasksListPushCount++;
+                    if (tasksList.length > coolingTime) {
+                        tasksList.shift();
+                    }
+                    keyPushed = true;
+                    tasksMap.set(currentTask, count - 1);
+                    if (count === 1) {
+                        tasksMap.delete(currentTask);
+                        index--;
+                    }
+                    entries = Array.from(tasksMap.entries());
                 }
-                keyPushed=true;
-                // let value=tasksMap.get(entries[i][0]);
-                // let value=entries[i][1];
-                // value=value-1;
-                tasksMap.set(currentTask,value-1);
+            })
 
 
-                if(value===1){
-                    tasksMap.delete(currentTask);
-                    i=i-1;
-                }
-                // keys=Array.from(tasksMap.keys());
-                entries=Array.from(tasksMap.entries());
-            }
-        }
         if(!keyPushed){
             tasksList.push('idle');
             tasksListPushCount++;
@@ -83,25 +58,6 @@ console.log(scheduler(["A","A","A"],0)===3);
 console.log(scheduler(["A","A","A"],5)===13);
 console.log(scheduler(["A","A","B","B","A","A"],4)===16);
 
-
-
-// console.log(scheduler(["A","A","A","B","B","B"],3)===10);
-// console.log(scheduler(["A","B","A","B","A","B"],3)===10);
-// console.log(scheduler(["A","A","A","B","B","B"],2)===8);
-// console.log(scheduler(["A","A","A","B","B","B"],3)===10);
-// console.log(scheduler(["A"],7)===1);
-// console.log(scheduler(["A","B"],7)===2);
-// console.log(scheduler(["A","B","A"],3)===5);
-// console.log(scheduler(["B","A","A"],3)===5);
-// console.log(scheduler(["B","A","A","B"],1)===4);
-// console.log(scheduler(["B","A","A"],3)===5);
-// console.log(scheduler(["B","A","A"],1)===3);
-// console.log(scheduler(["A","A"],0)===2);
-// console.log(scheduler(["B","A","A","A"],1)===5);
-// console.log(scheduler(["A","B","C","D"],1)===4);
-// console.log(scheduler(["A","A","A"],0)===3);
-// console.log(scheduler(["A","A","A"],5)===13);
-// console.log(scheduler(["A","A","B","B","A","A"],4)===16);
 
 
 // Given a char array representing tasks CPU need to do. It contains capital letters A to Z where different letters represent different tasks. Tasks could be done without original order. Each task could be done in one interval. For each interval, CPU could finish one task or just be idle.
