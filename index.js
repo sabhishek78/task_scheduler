@@ -1,44 +1,25 @@
 function scheduler(tasks,coolingTime){
     let tasksMap = new Map();
-    tasks.forEach((e)=>tasksMap.get(e)===undefined?tasksMap.set(e,1):tasksMap.set(e,tasksMap.get(e)+1))
+    tasks.forEach((e)=>tasksMap.set(e,tasksMap.get(e)===undefined?1:tasksMap.get(e)+1))
     let entries=Array.from(tasksMap.entries());
     entries.sort(function(a,b){return b[1]-a[1]});
-    let tasksList=[];
-    let keyPushed=false;
-    let tasksListPushCount=0;
-    while(tasksMap.size!==0){
-        keyPushed=false;
-        entries.forEach(([key,value],index)=> {
-                let currentTask = key;
-                let count = value;
-                if (!tasksList.includes(currentTask)) {
-                    tasksList.push(currentTask);
-                    tasksListPushCount++;
-                    if (tasksList.length > coolingTime) {
-                        tasksList.shift();
-                    }
-                    keyPushed = true;
-                    tasksMap.set(currentTask, count - 1);
-                    if (count === 1) {
-                        tasksMap.delete(currentTask);
-                        index--;
-                    }
-                    entries = Array.from(tasksMap.entries());
-                }
-            })
-
-
-        if(!keyPushed){
-            tasksList.push('idle');
-            tasksListPushCount++;
-            if(tasksList.length>coolingTime){
-                tasksList.shift();
-            }
+    let count=0;
+    while(entries.length!==0){
+        if(!entries.some((e)=>e[1]!==1)){
+            count+=entries.length;
+            break;
         }
+        else{
+            count+=(coolingTime+1>=entries.length?coolingTime+1:entries.length);
+        }
+        entries.forEach((e)=>{e[1]=e[1]-1});
+        entries=(entries).filter((e)=>e[1]>0);
     }
-    return tasksListPushCount;
+    return count;
 }
 
+
+console.log(scheduler(["A","A","B","B","C","D"],2)===6);
 console.log(scheduler(["A","A","A","B","B"],4)===11);
 console.log(scheduler(["A","A","A","B","B","B"],3)===10);
 console.log(scheduler(["A","B","A","B","A","B"],3)===10);
@@ -57,6 +38,9 @@ console.log(scheduler(["A","B","C","D"],1)===4);
 console.log(scheduler(["A","A","A"],0)===3);
 console.log(scheduler(["A","A","A"],5)===13);
 console.log(scheduler(["A","A","B","B","A","A"],4)===16);
+
+
+
 
 
 
