@@ -10,8 +10,8 @@ function scheduler(tasks,coolingTime){
         entries.sort(function(a,b){return b[1]-a[1]});
         keyPushed=false;
         for(let i=0;i<entries.length;i++){
-            let currentTask=entries[i][0];
-            let value=entries[i][1];
+            let [currentTask,value]=entries[i];
+
             if(!tasksList.includes(currentTask)){
                 tasksList.push(currentTask);
                 tasksListPushCount++;
